@@ -10,11 +10,17 @@ def fill_more_data_for_empty():
     offset = 0
     limit = 200
     stop = False
-    while ( not stop ):
-        res = StarNews.objects(text__size__lt=2, review__in=[1,0]).skip(offset).limit(limit)
-        #res = StarNews.objects(text__size__lt=2, review__in=[1,2]).skip(offset).limit(limit)
+    size = 0
+    while ( not stop and size < 2):
+        res = StarNews.objects(text__size=size, review__in=[1,0]).skip(offset).limit(limit)
+        offset = offset + limit 
         if len(res)==0:
-            break
+            if size ==0:
+                size = size + 1
+                continue
+            else:
+                break
+            
         for item in res:
             url = item.url
             if url.find('slide.ent.sina.com.cn/')>=0:
@@ -23,7 +29,6 @@ def fill_more_data_for_empty():
             elif url.find('ent.qq.com/')>=0:
                 print 'qq'
                 add_more_info_for_qq(item)
-        offset = offset + limit 
     return
 
 def add_more_info_for_qq(obj):
