@@ -13,6 +13,7 @@ from histar.util.baidu_fetch import (
 from histar.db import (
         DBSession,
         )
+from types import DictType, ListType
 import urllib
 import copy
 import time
@@ -135,6 +136,11 @@ class SinaWork(object):
             for image in res['images']:
                 if image not in tmp['images']:
                     tmp['images'].append(image)
+            text_len = len( tmp['text'] )
+            if text_len <= 1:
+                text = self.add_more_info_for_sina( url )
+                if len(text) > text_len:
+                    tmp['text'] = text
         except Exception, e:
             print e
         finally:
@@ -152,6 +158,40 @@ class SinaWork(object):
             return text_list
         else:
             []
+
+    def add_more_info_for_sina(self,url):
+        print url
+        if url.find('slide.ent.sina.com.cn/') == -1:
+            print 'no need more info'
+            return []
+        status_code , res = FetchData.fetch( url , need_status_code=True )
+        if status_code not in ['200',200]:
+            print 'status_code is not 200'
+            return []
+        else:
+            try:
+                res = res.replace('\n','')
+                p = 'var slide_data =(.*?)var'
+                l = re.findall(p, res)
+                text = []
+                if len(l):
+                    res = l[0]
+                    res = res.strip()
+                    data = json.loads(res)
+                    for item in data['images']:
+                        tmp1 = {'type':'image','data':''}
+                        tmp2 = {'type':'text','data':''}
+                        if 'image_url' in item and item['image_url']:
+                            tmp1['data'] = item['image_url']
+                            text.append(tmp1)
+                        if 'title' in item and item['title']:
+                            tmp2['data'] = item['title']
+                            text.append(tmp2)
+                return text
+            except Exception,e:
+                print e
+                return []
+        
 
 if __name__ =="__main__":
     worker = SinaWork(lid=1253,pageid=108)

@@ -9,6 +9,7 @@ from histar.util.baidu_fetch import (
 from histar.db import (
         DBSession,
         )
+from types import DictType, ListType
 import copy
 import time
 import json
@@ -108,6 +109,11 @@ class QQWork(object):
             for image in res['images']:
                 if image not in tmp['images']:
                     tmp['images'].append(image)
+            text_len = len( tmp['text'] )
+            if text_len <= 1:
+                text = self.add_more_info_for_qq( url )
+                if len(text) > text_len:
+                    tmp['text'] = text
         except Exception, e:
             print e
         finally:
@@ -119,7 +125,54 @@ class QQWork(object):
         self.fetch_url = url
         self.url_template = self.fetch_url+'_{0}.htm?{1}'
 
-
+    def add_more_info_for_qq(self,url):
+        index = url.find('.htm')
+        url = url[:index] + '.hdBigPic.js'
+        status_code , res = FetchData.fetch( url , need_status_code=True )
+        if status_code not in ['200',200]:
+            print 'status_code is not 200'
+            return []
+        else:
+            try:
+                try:
+                    res = res.decode('GB2312')
+                except Exception, e:
+                    res = res.decode('GBK')
+                index = res.find('/*')
+                res = res[:index]
+                res = res.strip()
+                res = res.replace("'",'"')
+                res = json.loads( res )
+                def generate_text(data, text=[]):
+                    if isinstance(data,DictType):
+                        if 'Name' in data.keys():
+                            _type = data['Name'].lower()
+                            if _type in ['bigimgurl']:
+                                for item in data.get('Children',[]):
+                                    tmp ={ 'type':'image','data':''}
+                                    content = item.get('Content','')
+                                    if content:
+                                        tmp['data'] = content
+                                        text.append( tmp )
+                            elif _type in ['cnt_article']:
+                                for item in data.get('Children',[]):
+                                    tmp ={ 'type':'text','data':''}
+                                    content = item.get('Content','')
+                                    if content:
+                                        tmp['data'] = content
+                                        text.append( tmp )
+                        if 'Children' in data.keys():
+                            generate_text( data['Children'], text)
+                    elif isinstance( data, ListType ):
+                        for item in data:
+                            generate_text( item, text )
+                text = []
+                generate_text(res, text)
+                return text
+            except Exception,e:
+                print e
+                return []
+    
 if __name__ == '__main__':
     worker = QQWork('http://ent.qq.com/c/wbbl')
     worker()
