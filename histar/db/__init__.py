@@ -23,6 +23,7 @@ class StarNews(DynamicDocument):
     waptitle = StringField(default='')
     text = ListField( DictField(),default={} )
     review = IntField( default=0 )
+    star_name = StringField( default='' )
     
 class StarInfo(DynamicDocument):
     name = StringField(default='')
