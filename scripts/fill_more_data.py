@@ -12,16 +12,17 @@ def fill_more_data_for_empty():
     stop = False
     size = 0
     while ( not stop and size < 2):
-        res = StarNews.objects(text__size=size, review__in=[1,0]).skip(offset).limit(limit)
+        res = StarNews.objects(url__contains="slide.ent.sina.com.cn", text__size=size, review__lt=2).skip(offset).limit(limit)
         offset = offset + limit 
         if len(res)==0:
-            if size ==0:
+            if size <2:
                 size = size + 1
+                offset = 0
                 continue
             else:
                 break
-            
         for item in res:
+            print 'item review ', item.review
             url = item.url
             if url.find('slide.ent.sina.com.cn/')>=0:
                 print 'sina'
@@ -75,9 +76,10 @@ def add_more_info_for_qq(obj):
                         generate_text( item, text )
             text = []
             generate_text(res, text)
-            if text:
+            if text and len(text) > len(obj.text):
                 obj.text = text
-                obj.review = 0
+                if obj.review > 1:
+                    obj.review = 1
                 obj.save()
             print len(text)
         except Exception,e:
@@ -113,7 +115,8 @@ def add_more_info_for_sina(obj=None):
                         text.append(tmp2)
                 if text and len(text) > len(obj.text):
                     obj.text = text
-                    obj.review = 0 
+                    if obj.review > 1:
+                        obj.review =  1
                     obj.save()
         except Exception,e:
             print e
