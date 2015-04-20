@@ -126,6 +126,10 @@ class QQWork(object):
         self.url_template = self.fetch_url+'_{0}.htm?{1}'
 
     def add_more_info_for_qq(self,url):
+        print url
+        if url.find('ent.qq') == -1:
+            print 'no need more info'
+            return []
         index = url.find('.htm')
         url = url[:index] + '.hdBigPic.js'
         status_code , res = FetchData.fetch( url , need_status_code=True )
