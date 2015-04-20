@@ -1,1 +1,1 @@
-30 * * * * python fetch_latest.py
+10 * * * * /home/web/CRAWL/bin/python /home/web/crawl/scripts/fetch_latest.py >> /home/web/crawl/scripts/debug.log
