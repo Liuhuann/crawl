@@ -11,7 +11,7 @@ def fill_more_data_for_empty():
     limit = 200
     stop = False
     while ( not stop ):
-        res = StarNews.objects(text__size__lt=0, review__in=[1,0]).skip(offset).limit(limit)
+        res = StarNews.objects(text__size__lt=2, review__in=[1,0]).skip(offset).limit(limit)
         #res = StarNews.objects(text__size__lt=2, review__in=[1,2]).skip(offset).limit(limit)
         if len(res)==0:
             break
