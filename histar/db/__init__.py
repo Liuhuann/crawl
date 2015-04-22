@@ -21,7 +21,7 @@ class StarNews(DynamicDocument):
     wapurl = StringField(default='')
     title = StringField(default='')
     waptitle = StringField(default='')
-    text = ListField( DictField(),default={} )
+    text = ListField( DictField(),default=[] )
     review = IntField( default=0 )
     star_name = StringField( default='' )
     
@@ -40,7 +40,7 @@ class StarInfo(DynamicDocument):
     url = StringField( default='' )
 
 class DBSession(object):
-    need_update = True
+    need_update = False
     @classmethod
     def save(cls,data):
         try:

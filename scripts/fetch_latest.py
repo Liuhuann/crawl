@@ -5,10 +5,13 @@ from histar.processor.sina.worker import SinaWork
 from histar.processor.qq.worker import QQWork
 from histar.processor.xinhua.worker import XinhuaWork
 from histar.processor.toutiao.worker import ToutiaoWork
+from histar.processor.people.worker import PeopleWork
+from histar.processor.mxh.worker import MXHWork
+from histar.processor.qhtv.worker import QHTVWork
 
 if __name__ == '__main__':
     worker_list = []
-    worker_list.append( ToutiaoWork(allow_request_count=20) ) #今日头条
+    worker_list.append( ToutiaoWork(allow_request_count=100) ) #今日头条
     worker_list.append( XinhuaWork(past_news_need=True, page_limit=True, total_page_count=5) ) #今日头条
     worker_list.append( QQWork('http://ent.qq.com/c/wbbl', page_limit=True, total_page_count=6) )
     worker_list.append( QQWork('http://ent.qq.com/c/mxzx', page_limit=True, total_page_count=6) )
@@ -36,6 +39,9 @@ if __name__ == '__main__':
     worker_list.append( BaiduWork(cmd=4, channel_name='star_neidi' ) )
     worker_list.append( BaiduWork(cmd=4, channel_name='star_oumei' ) )
     worker_list.append( BaiduWork(cmd=4, channel_name='star_rihan' ) )
+    worker_list.append( PeopleWork() )
+    worker_list.append( MXHWork(total_page_count=20) )
+    worker_list.append( QHTVWork(total_page_count=5) )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()

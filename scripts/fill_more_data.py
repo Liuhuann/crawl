@@ -13,6 +13,7 @@ def fill_more_data_for_empty():
     size = 0
     while ( not stop and size < 2):
         res = StarNews.objects(url__contains="slide.ent.sina.com.cn", text__size=size, review__lt=2).skip(offset).limit(limit)
+        res = StarNews.objects(url__contains="ent.qq", text__size=size, review__lt=2).skip(offset).limit(limit)
         offset = offset + limit 
         if len(res)==0:
             if size <2:

@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+import re
 import json
 from types import ListType, DictType
 
@@ -23,3 +24,26 @@ def json_loads_str(str):
         return res
     except Exception, e:
         return None
+
+def reformat_date_str(ts):
+    l = re.split('-|:| ', ts)
+    _l = []
+    for item in l:
+        if len(item)==1:
+            item = '0'+item
+        _l.append(item)
+    ts = _l[0]
+    for item in _l[1:3]:
+        ts = ts+'-'+item
+    ts = ts+' '+_l[3] if len(_l)>3 else ts
+    for item in _l[4:]:
+        ts = ts+':'+item
+    return ts
+
+if __name__ == '__main__':
+    print reformat_date_str('2015-2-1')
+    print reformat_date_str('2015-02-1')
+    print reformat_date_str('2015-2-01')
+    print reformat_date_str('2015-02-01 9:10')
+    print reformat_date_str('2015-02-01 9:1')
+    print reformat_date_str('2015-02-01 9:1:1')

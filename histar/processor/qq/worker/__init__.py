@@ -73,12 +73,14 @@ class QQWork(object):
         intro_pattern = '<div.*?class="nrP">(.*?)<a.*?>全文'
         url_pattern = '<a.*?class="detail".*?href="(.*?)">全文</a>'
         media_name_pattern = '<p.*?class="newsInfo".*?>(.*?)<span.*?class="date".*?>'
+        ts_pattern = '<span class="date">.*?([0-9]{2,4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*?</span'
         for item in news_list:
             img = re.findall( small_img_pattern , item )
             title = re.findall( title_pattern, item )
             intro = re.findall( intro_pattern, item )
             url = re.findall( url_pattern, item )
             media_name = re.findall( media_name_pattern, item )
+            ts = re.findall( ts_pattern, item )
             tmp = {}
             tmp['img'] = img
             tmp['title'] = title[0] if title else ''
@@ -86,11 +88,14 @@ class QQWork(object):
             tmp['intro'] = intro[0] if intro else ''
             tmp['summary'] = tmp['intro']
             tmp['media_name'] = media_name[0] if media_name else ''
+            tmp['publish_ts'] = ts[0] if ts else ''
+            print tmp['publish_ts']
             url = url[0] if url else ''
             url = self.domain + url if url and url.startswith('/a') else ''
             tmp['url'] = url
             tmp = self.append_more_info( tmp )
             self.resp.append( tmp )
+            break
 
     def append_more_info(self, tmp):
         """
@@ -100,17 +105,15 @@ class QQWork(object):
         try:
             res = BaiduFetchAnalyst.fetch( url ) 
             tmp['text'] = res['text']
-            if res.get('publish_ts',''):
-                tmp['publish_ts'] = res['publish_ts']
-            if res.get('media_name',""):
-                tmp['media_name'] = res['media_name']
+            image_count = 0
             if 'images' not in tmp:
                 tmp['images'] = []
             for image in res['images']:
+                image_count = image_count + 1
                 if image not in tmp['images']:
                     tmp['images'].append(image)
             text_len = len( tmp['text'] )
-            if text_len <= 1:
+            if image_count<1 and url.find('ent.qq.com')>=1:
                 text = self.add_more_info_for_qq( url )
                 if len(text) > text_len:
                     tmp['text'] = text

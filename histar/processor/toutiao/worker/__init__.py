@@ -13,6 +13,7 @@ from histar.util.text_process import (
 from histar.db import (
         DBSession,
         )
+from datetime import datetime
 import urllib
 import copy
 import time
@@ -20,7 +21,7 @@ import json
 import re
 
 class ToutiaoWork(object):
-    def __init__(self, allow_request_count=400,  **kwargs):
+    def __init__(self, allow_request_count=4000,  **kwargs):
         self.fetch_url = 'http://toutiao.com/api/article/recent/?'
         self.data={}
         self.data['source'] = 2
@@ -85,15 +86,20 @@ class ToutiaoWork(object):
                 tmp['media_name'] = item['source']
                 tmp['summary'] = item['abstract']
                 tmp['url'] = item['article_url']
-                create_time = int(item['create_time'])
-                max_create_time = create_time if create_time > max_create_time else max_create_time
+                ts = item['publish_time']
+                tmp['publish_ts'] = datetime.fromtimestamp(float(ts)).strftime("%Y-%m-%d %H:%M:%S")
+                #create_time = int(item['create_time'])
+                #max_create_time = create_time if create_time > max_create_time else max_create_time
                 tmp = self.append_more_info( tmp )
                 flag = DBSession.save( tmp )
                 if not flag:
                     print 'write failed with data=', json.dumps( tmp )
                 else:
                     print 'write successed '
-            self.data['max_create_time'] = max_create_time
+            self.data['max_create_time'] = self.resp[-1]['create_time']
+            print '***************************'
+            print self.data['max_create_time']
+            print '***************************'
         else:
             print 'error with no self.resp or self.resp is not list type'
 
@@ -105,10 +111,6 @@ class ToutiaoWork(object):
         try:
             res = BaiduFetchAnalyst.fetch( url ) 
             tmp['text'] = res['text']
-            if res.get('publish_ts',''):
-                tmp['publish_ts'] = res['publish_ts']
-            if res.get('media_name',""):
-                tmp['media_name'] = res['media_name']
             if 'images' not in tmp:
                 tmp['images'] = []
             for image in res['images']:
@@ -120,5 +122,5 @@ class ToutiaoWork(object):
             return tmp
 
 if __name__ == "__main__":
-    worker = ToutiaoWorker()
+    worker = ToutiaoWork()
     worker()

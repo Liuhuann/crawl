@@ -32,9 +32,9 @@ class XinhuaWork(object):
         
 
     def __call__(self):
-        if self.past_news_need:
+        if True:
             self.fetch_past_news()
-        self.fetch_today_news()
+        #self.fetch_today_news()
 
     def fetch_today_news(self):
         status_code , self.resp = FetchData.fetch(self.today_new_url, need_status_code=True)
@@ -130,8 +130,6 @@ class XinhuaWork(object):
         try:
             res = BaiduFetchAnalyst.fetch( url ) 
             tmp['text'] = res['text']
-            if res.get('publish_ts',''):
-                tmp['publish_ts'] = res['publish_ts']
             if res.get('media_name',""):
                 tmp['media_name'] = res['media_name']
             if 'images' not in tmp:
@@ -139,6 +137,17 @@ class XinhuaWork(object):
             for image in res['images']:
                 if image not in tmp['images']:
                     tmp['images'].append(image)
+            status, res = FetchData.fetch(url, need_status_code = True )
+            if status in ['200',200]:
+                res = res.lower()
+                res = res.replace('年','-')
+                res = res.replace('月','-')
+                res = res.replace('日 ',' ')
+                res = res.replace('日',' ')
+                pa = '([0-9]{2,4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}|[0-9]{2,4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2})'
+                l = re.findall(pa, res, re.MULTILINE)
+                if len(l) ==1:
+                    tmp['publish_ts'] = l[0]
         except Exception, e:
             print e
         finally:
@@ -154,5 +163,5 @@ class XinhuaWork(object):
         self.data.update( data )
 
 if __name__ =="__main__":
-    worker = XinhuaWork(past_news_need=True, total_page_count=100, page_limit=True)
+    worker = XinhuaWork(past_news_need=True, total_page_count=51, page_limit=True)
     worker()

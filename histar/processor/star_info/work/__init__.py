@@ -1,16 +1,16 @@
 #-*- coding:utf-8 -*-
-#from histar.util.text_process import keep_certain_keys
-#from histar.util.url_fetch import (
-#        FetchData,
-#        )
-#from histar.db import (
-#        StarInfo,
-#        )
-from util.text_process import keep_certain_keys
-from util.url_fetch import (
+from histar.util.text_process import keep_certain_keys
+from histar.util.url_fetch import (
         FetchData,
         )
-from db import (
+from histar.db import (
+        StarInfo,
+        )
+#from util.text_process import keep_certain_keys
+#from util.url_fetch import (
+#        FetchData,
+#        )
+from histar.db import (
         StarInfo,
         DBSession,
         )
@@ -31,7 +31,7 @@ class SinaStarInfoFetchWork(object):
     def __call__(self):
         for area in self.area_list:
             self.data['area'] = area
-            self.page = 339 if area==1 else 1 
+            self.page = 1 
             while( self.page <= self.total_page ):
                 self.fetch_one_page()
                 self.page = self.page + 1 
@@ -111,7 +111,6 @@ class SinaStarInfoFetchWork(object):
         else:
             print 'error with no self.resp or self.resp is not list type'
 
-#if __name__ =="__main__":
-worker = SinaStarInfoFetchWork()
-worker()
-pass
+if __name__ =="__main__":
+    worker = SinaStarInfoFetchWork()
+    worker()
