@@ -22,7 +22,10 @@ def add_star_name_for_news():
         if 0 == len(res):
             stop = True
         for item in res:
-            star_name = match_first_name( item.title, star_name_list )
+            try:
+                star_name = match_first_name( item.title, star_name_list )
+            except Exception, e:
+                pass
             item.review = 1
             item.star_name = star_name
             item.save()
