@@ -57,5 +57,18 @@ def update_publish_ts():
             #            item.publish_ts = publish_ts
             #            item.save()
 
+def update_illegal_data():
+    offset = 0
+    limit = 50
+    stop = False
+    while( not stop ):
+        res = StarNews.objects(media_name="中新网").skip(offset).limit(limit)
+        offset = offset + limit
+        if len( res ) == 0:
+            break
+        for item in res:
+            print item.url
+        break
+    
 if __name__ == '__main__':
-    update_publish_ts()
+    update_illegal_data()

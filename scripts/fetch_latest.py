@@ -8,6 +8,10 @@ from histar.processor.toutiao.worker import ToutiaoWork
 from histar.processor.people.worker import PeopleWork
 from histar.processor.mxh.worker import MXHWork
 from histar.processor.qhtv.worker import QHTVWork
+from histar.processor.chinanews.worker import ChinaNewsWork
+from histar.processor.cntv.worker import CNTVWork, CNTVStarImageWork
+from histar.processor.huabian.worker import HuabianWork
+from histar.processor.szhk.worker import SZHKWork
 
 if __name__ == '__main__':
     worker_list = []
@@ -42,8 +46,13 @@ if __name__ == '__main__':
     worker_list.append( PeopleWork() )
     worker_list.append( MXHWork(total_page_count=10) )
     worker_list.append( QHTVWork(total_page_count=5) )
+    worker_list.append( SZHKWork() )
+    worker_list.append( ChinaNewsWork(total_page_count=5) )
+    worker_list.append( HuabianWork(total_page_count=5) )
+    worker_list.append( CNTVWork() )
+    worker_list.append( CNTVStarImageWork() )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()
-        p.join()
+        #p.join()
         print 'all is done'

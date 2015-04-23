@@ -40,6 +40,7 @@ class ToutiaoWork(object):
         while( not self.stop_work and self.request_count < self.allow_request_count ):
             self.fetch_page_data()
             self.request_count = self.request_count + 1
+            break
 
     def fetch_page_data(self):
         self.data['_'] = self.data['_'] + 1
