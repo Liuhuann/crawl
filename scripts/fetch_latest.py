@@ -12,6 +12,7 @@ from histar.processor.chinanews.worker import ChinaNewsWork
 from histar.processor.cntv.worker import CNTVWork, CNTVStarImageWork
 from histar.processor.huabian.worker import HuabianWork
 from histar.processor.szhk.worker import SZHKWork
+from histar.processor.youth.worker import YouthWork
 
 if __name__ == '__main__':
     worker_list = []
@@ -51,6 +52,7 @@ if __name__ == '__main__':
     worker_list.append( HuabianWork(total_page_count=3) )
     worker_list.append( CNTVWork() )
     worker_list.append( CNTVStarImageWork() )
+    worker_list.append( YouthWork(total_page_count=2) )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()
