@@ -20,19 +20,22 @@ import re
 import urllib
 
 class CNTVWork(object):
-    def __init__(self, page_limit=True, total_page_count=1, page = 1):
+    def __init__(self, page_limit=True, total_page_count=1, page = 1, total_request_count=50):
         self.stop_work = False
         self.domain = 'http://ent.cntv.cn/mingxing/{0}/index.shtml'
         self.fetch_url = ''
         self.data = {}
         self.page_limit = page_limit
         self.total_page_count = total_page_count
+        self.total_request_count = total_request_count
         self.page = page
+        self.request_count = 0
         self.channels = ['01','02']
 
     def __call__(self):
         for channel in self.channels:
             self.page = 1
+            self.request_count = 0
             self.fetch_url = self.domain.format(channel)
             while( self.page <= self.total_page_count and not self.stop_work):
                 self.fetch_page_data()
@@ -94,6 +97,10 @@ class CNTVWork(object):
             #    print item['data']
             print '***********************************'
             self.resp.append( tmp )
+            self.request_count = self.request_count + 1
+            if self.request_count >= self.total_request_count:
+                self.stop_work = True
+                break
 
     def append_more_info(self, tmp):
         """
@@ -112,19 +119,22 @@ class CNTVWork(object):
             return tmp
 
 class CNTVStarImageWork(object):
-    def __init__(self, page_limit=True, total_page_count=1, page = 1):
+    def __init__(self, page_limit=True, total_page_count=1, page = 1, total_request_count=50):
         self.stop_work = False
         self.domain = 'http://ent.cntv.cn/picture/{0}/index.shtml'
         self.fetch_url = ''
         self.data = {}
         self.page_limit = page_limit
         self.total_page_count = total_page_count
+        self.total_request_count = total_request_count
+        self.request_count = 0
         self.page = page
         self.channels = ['01','02']
 
     def __call__(self):
         for channel in self.channels:
             self.page = 1
+            self.request_count = 0
             self.fetch_url = self.domain.format(channel)
             while( self.page <= self.total_page_count and not self.stop_work):
                 self.fetch_page_data()
@@ -180,8 +190,12 @@ class CNTVStarImageWork(object):
             #    print item['type'], item['data']
             #print tmp['title']
             #print '***********************************'
-            self.resp.append( tmp )
             #break
+            self.resp.append( tmp )
+            self.request_count = self.request_count + 1
+            if self.request_count >= self.total_request_count:
+                self.stop_work = True
+                break
 
     def append_more_info(self, tmp):
         """
@@ -230,7 +244,7 @@ class CNTVStarImageWork(object):
             return tmp
 
 if __name__ =="__main__":
-    #worker = CNTVWork()
-    #worker()
+    worker = CNTVWork()
+    worker()
     worker = CNTVStarImageWork()
     worker()
