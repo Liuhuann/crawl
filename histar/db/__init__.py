@@ -24,6 +24,7 @@ class StarNews(DynamicDocument):
     text = ListField( DictField(),default=[] )
     review = IntField( default=0 )
     star_name = StringField( default='' )
+    download_img = IntField( default=0 )
     
 class StarInfo(DynamicDocument):
     name = StringField(default='')
