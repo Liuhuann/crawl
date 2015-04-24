@@ -113,10 +113,17 @@ class ChinaNewsWork(object):
             if status not in ['200',200]:
                 print 'get detail page is error'
             else:
+                try:
+                    res = res.decode('gb2312').encode('utf-8')
+                except:
+                    print 'not gb2312 code'
+                    res = res.decode('GBK').encode('utf-8')
+                    
                 res = res.replace('\n','')
                 res = res.replace("'",'"')
                 lindex = res.find('<!--图片start-->')
                 rindex = res.find('<!--图片end-->')
+                print lindex, rindex
                 if lindex>=0 and rindex>=0:
                     res = res[lindex:rindex]
                     image_pattern = '<img.*?src="(.*?)".*?'
@@ -135,5 +142,9 @@ class ChinaNewsWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = ChinaNewsWork(total_page_count=998)
-    worker()
+    worker = ChinaNewsWork(total_page_count=1)
+    tmp = {'url':'http://www.chinanews.com/yl/2015/04-24/7230894.shtml'}
+    res = worker.append_more_info( tmp )
+    for item in res['text']:
+        print item['type']
+        print item['data']
