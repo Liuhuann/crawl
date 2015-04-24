@@ -38,7 +38,7 @@ def add_star_name_for_news():
     limit = 200
     stop = False
     while( not stop ):
-        res = list(StarNews.objects(star_name='').order_by('-publish_ts').skip(offset).limit(limit).no_cache())
+        res = list(StarNews.objects(star_name='', review=0).order_by('-publish_ts').skip(offset).limit(limit).no_cache())
         print len(res)
         offset = offset + limit
         if 0 == len(res):
