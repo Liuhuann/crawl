@@ -77,5 +77,4 @@ def match_first_name(string, str_name_list):
             
         
 if __name__ == '__main__':
-    update_histar_info()
-    #add_star_name_for_news()
+    add_star_name_for_news()
