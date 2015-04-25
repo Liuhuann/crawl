@@ -117,11 +117,51 @@ class ToutiaoWork(object):
             for image in res['images']:
                 if image not in tmp['images']:
                     tmp['images'].append(image)
+            if url.find('toutiao.com')>=0:
+                tmp = self.add_more_info_for_toutiao(tmp)
         except Exception, e:
             print e
         finally:
             return tmp
 
+    def add_more_info_for_toutiao(self, tmp):
+        status_code , res = FetchData.fetch( tmp['url'] , need_status_code=True )
+        if status_code not in ['200',200]:
+            print 'status_code is not 200'
+            return
+        else:
+            try:
+                res = res.decode('utf-8')
+                res = res.replace('\n','')
+                res = res.replace("'",'"')
+                lindex = res.find('article-content')
+                rindex = res.find('comments-anchor')
+                if lindex>= 0 and rindex>0:
+                    res = res[lindex:rindex]
+                p = '<img .*?src="(.*?)"'
+                images = re.findall(p, res)
+                text = {}
+                if images:
+                    for item in tmp['text']:
+                        index = res.find( item['data'][:10] )
+                        text[ index ] = item
+                    for image in images:
+                        index = res.find( image )
+                        text[ index ] = { 'type':'image', 'data':image }
+                    t = []
+                    index = text.keys()
+                    index.sort()
+                    for key in index:
+                        if key >= 0:
+                            t.append( text[key] )
+                    tmp['text']  = t   
+                    print '找到图片个数为', len(images)
+                else:
+                    print '没有找到图片'
+            except Exception,e:
+                print e
+        return tmp
+    
 if __name__ == "__main__":
-    worker = ToutiaoWork()
+    worker = ToutiaoWork(allow_request_count=10)
     worker()

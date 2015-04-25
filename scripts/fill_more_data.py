@@ -11,26 +11,25 @@ def fill_more_data_for_empty():
     limit = 200
     stop = False
     size = 0
-    while ( not stop and size < 2):
-        res = StarNews.objects(url__contains="slide.ent.sina.com.cn", text__size=size, review__lt=2).skip(offset).limit(limit)
-        res = StarNews.objects(url__contains="ent.qq", text__size=size, review__lt=2).skip(offset).limit(limit)
+    while ( not stop ):
+        #res = StarNews.objects(url__contains="slide.ent.sina.com.cn", text__size=size, review__lt=2).skip(offset).limit(limit)
+        #res = StarNews.objects(url__contains="ent.qq", text__size=size, review__lt=2).skip(offset).limit(limit)
+        res = StarNews.objects(url__contains="toutiao.com", review__lt=2).skip(offset).limit(limit)
         offset = offset + limit 
         if len(res)==0:
-            if size <2:
-                size = size + 1
-                offset = 0
-                continue
-            else:
-                break
+            break
         for item in res:
             print 'item review ', item.review
             url = item.url
-            if url.find('slide.ent.sina.com.cn/')>=0:
-                print 'sina'
-                add_more_info_for_sina(item)
-            elif url.find('ent.qq.com/')>=0:
-                print 'qq'
-                add_more_info_for_qq(item)
+            #if url.find('slide.ent.sina.com.cn/')>=0:
+            #    print 'sina'
+            #    add_more_info_for_sina(item)
+            #elif url.find('ent.qq.com/')>=0:
+            #    print 'qq'
+            #    add_more_info_for_qq(item)
+            if url.find('toutiao')>=0:
+                print 'toutiao'
+                add_more_info_for_toutiao( item )
     return
 
 def add_more_info_for_qq(obj):
@@ -121,6 +120,47 @@ def add_more_info_for_sina(obj=None):
                     obj.save()
         except Exception,e:
             print e
+    
+def add_more_info_for_toutiao(obj=None):
+    url = obj.url
+    print url
+    status_code , res = FetchData.fetch( url , need_status_code=True )
+    if status_code not in ['200',200]:
+        print 'status_code is not 200'
+        return
+    else:
+        try:
+            res = res.decode('utf-8')
+            res = res.replace('\n','')
+            res = res.replace("'",'"')
+            lindex = res.find('article-content')
+            rindex = res.find('comments-anchor')
+            if lindex>= 0 and rindex>0:
+                res = res[lindex:rindex]
+            p = '<img .*?src="(.*?)"'
+            images = re.findall(p, res)
+            text = {}
+            if images:
+                for item in obj['text']:
+                    index = res.find( item['data'][:10] )
+                    text[ index ] = item
+                for image in images:
+                    index = res.find( image )
+                    text[ index ] = { 'type':'image', 'data':image }
+                t = []
+                index = text.keys()
+                index.sort()
+                for key in index:
+                    if key >= 0:
+                        t.append( text[key] )
+                obj['text']  = t   
+                obj.save()
+                print '找到图片个数为', len(images)
+            else:
+                print '没有找到图片'
+        except Exception,e:
+            print e
+    
     
 
 fill_more_data_for_empty()
