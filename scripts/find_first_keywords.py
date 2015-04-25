@@ -1,56 +1,76 @@
 #-*- coding:utf-8 -*-
-
+import sys
 import time
+import datetime
 from histar.db import StarNews, StarInfo
+from sqlalchemy.orm import sessionmaker
+from autoload import auto_load_register_table_class
+
+reload(sys) 
+sys.setdefaultencoding('utf8')
+
+model_mapper_configure = []
+keywords_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@192.168.1.20/search_key_words?charset=utf8mb4'
+keywords_configure = {
+    'mysql_url': keywords_url,
+    'mapper_list':[ ('special_words','KeyWords')]
+    }
+model_mapper_configure.append( keywords_configure )
+res = auto_load_register_table_class( model_mapper_configure )
+
+for item in res:
+    globals()[ item.__name__ ] = item
+
+keywords_engine = KeyWords.__table__.metadata.bind
+keywordssession = sessionmaker( bind = keywords_engine )
 
 def get_all_star_name():
-    res = StarInfo.objects().all()
-    data = []
-    for item in res:
-        data.append( item.name.strip() )
-    return data
-
-def update_histar_info():
+    session = keywordssession()
     offset = 0
-    limit = 200
-    stop = False
-    while( not stop ):
-        res = StarInfo.objects().skip(offset).limit(limit) 
-        print offset
+    limit = 500
+    data = []
+    while( True ):
+        res = session.query( KeyWords ).offset(offset).limit(limit).all()
+        offset = offset + limit
+        if len(res)==0:
+            break
         for item in res:
-            name = item.name
-            print name, type(name).__name__
-            if type(name).__name__ in ['unicode']:
+            name = item.show_word
+            if type(name).__name__ == 'unicode':
                 name = name.encode('utf-8')
             name = name.strip()
             name = name.replace('-','·')
             name = name.replace('"','')
             name = name.strip()
             name = name.replace(' ','·')
-            item.name = name
-            #res.name = name.encode('utf-8')
-            item.save()
-        offset = offset + limit
+            if name not in data:
+                data.append( name )
+    return data
 
-def add_star_name_for_news():
-    star_name_list = get_all_star_name()
+def add_star_name_for_news(star_name_list):
     offset = 0
     limit = 200
     stop = False
-    while( not stop ):
-        res = list(StarNews.objects(star_name='', review=0).order_by('-publish_ts').skip(offset).limit(limit).no_cache())
+    while( not stop and offset < 2000):
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        res = list(StarNews.objects(star_name='', publish_ts__lt=now, review__in=[0,1]).order_by('-publish_ts').skip(offset).limit(limit).no_cache())
         print len(res)
         offset = offset + limit
         if 0 == len(res):
             stop = True
         for item in res:
             try:
-                star_name = match_first_name( item.title, star_name_list )
+                title = item.title
+                print title , type(title).__name__
+                if type(title).__name__ in['unicode']:
+                    title = title.encode('utf-8')
+                star_name = match_first_name( title, star_name_list )
                 item.star_name = star_name
+                item.review = 1
+                item.save()
             except Exception, e:
+                print e
                 pass
-            item.review = 1
-            item.save()
             
 
 def match_first_name(string, str_name_list):
@@ -58,23 +78,21 @@ def match_first_name(string, str_name_list):
     min_index = 1000
     star_name = ''
     for item in str_name_list:
+        if type(item).__name__ in ['unicode']:
+            item = item.encode('utf-8')
         index = string.find( item )
         if 0<= index:
             if index <= min_index:
                 min_index = index
                 if len(item) > len(star_name):
                     star_name = item
-            #if index < 1:
-            #    star_name = item
-            #    break
-            #else:
-            #    if index < min_index:
-            #        min_index = index
-            #        star_name = item
     end_time = time.time()
     print string , ' first_name is ', star_name, ' use time is ', end_time - start_time
     return star_name
             
         
 if __name__ == '__main__':
-    add_star_name_for_news()
+    star_name_list = get_all_star_name()
+    while( True ):
+        add_star_name_for_news(star_name_list)
+        time.sleep(60*3)
