@@ -4,7 +4,7 @@ import datetime
 from types import DictType
 import hashlib
 
-connect('histar',host='192.168.1.222', port=27001)
+connect('histar',host='192.168.1.82', port=30001)
 
 class StarNews(DynamicDocument):
     keywords = StringField(default='')
