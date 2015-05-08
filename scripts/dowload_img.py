@@ -35,7 +35,7 @@ keywords_engine = create_engine( keywords_url, pool_recycle=30 )
 wodfansession = sessionmaker( bind = wodfan_engine )
 keywordssession = sessionmaker( bind = keywords_engine )
 
-ns = 'test_download'
+ns = 'navigate_images'
 
 def get_all_proxies():
     client = pymongo.MongoClient("192.168.1.110", 30001)
@@ -170,7 +170,7 @@ def update_star_news_with_download_image():
                 print '没有图片'
                 obj.download_img = 1
                 obj.save()
-        break
+        #break
                     
 def match_first_name(string, star_name_dict):
     """
