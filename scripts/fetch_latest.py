@@ -13,6 +13,8 @@ from histar.processor.cntv.worker import CNTVWork, CNTVStarImageWork
 from histar.processor.huabian.worker import HuabianWork
 from histar.processor.szhk.worker import SZHKWork
 from histar.processor.youth.worker import YouthWork
+from histar.processor.yxlady.worker import YXLadyHWork
+from histar.processor.dyw_1905.worker import DYWork
 
 if __name__ == '__main__':
     worker_list = []
@@ -53,8 +55,9 @@ if __name__ == '__main__':
     worker_list.append( CNTVWork() )
     worker_list.append( CNTVStarImageWork() )
     worker_list.append( YouthWork(total_page_count=2) )
+    worker_list.append( YXLadyHWork(request_count=2) )
+    worker_list.append( DYWork(total_page_count=3) )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()
-        #p.join()
         print 'all is done'

@@ -1,3 +1,1 @@
-10 * * * * /home/web/CRAWL/bin/python /home/web/crawl/scripts/fetch_latest.py >> /home/web/crawl/scripts/debug.log
-30 * * * * /home/web/CRAWL/bin/python /home/web/crawl/scripts/find_first_keywords.py >> /home/web/crawl/scripts/find_first_star_debug.log
-50 * * * * /home/web/CRAWL/bin/python /home/web/crawl/scripts/fill_more_data.py >> /home/web/crawl/scripts/fille_more_info_debug.log
+*/20 * * * * export thrift_stage=yanjiao; /hom/eweb/CRAWL/bin/python /home/web/crawl/scripts/fetch_latest.py >> /home/web/crawl/scripts/debug.log

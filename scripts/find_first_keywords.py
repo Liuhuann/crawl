@@ -2,6 +2,7 @@
 import sys
 import time
 import datetime
+from histar.config import *
 from histar.db import StarNews, StarInfo
 from sqlalchemy.orm import sessionmaker
 from autoload import auto_load_register_table_class
@@ -10,7 +11,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 model_mapper_configure = []
-keywords_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@192.168.1.20/search_key_words?charset=utf8mb4'
+keywords_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@'+MYSQL_HOST+':'+MONGO_PORT+'/search_key_words?charset=utf8mb4'
 keywords_configure = {
     'mysql_url': keywords_url,
     'mapper_list':[ ('special_words','KeyWords')]

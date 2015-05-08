@@ -23,7 +23,7 @@ import re
 import urllib
 
 class YXLadyHWork(object):
-    def __init__(self, page_limit=True, total_page_count=25, page = 1, channel_ids=[142,143,144,145] ):
+    def __init__(self, page_limit=True, total_page_count=25, page = 1, channel_ids=[142,143,144,145] , request_count= 5):
         self.stop_work = False
         self.fetch_url = 'http://ent.yxlady.com/List_{0}'
         self.fetch_format_url = self.fetch_url
@@ -32,12 +32,13 @@ class YXLadyHWork(object):
         self.total_page_count = total_page_count
         self.page = page
         self.channel_ids = channel_ids
+        self.request_count = request_count
 
     def __call__(self):
 		for channel_id in self.channel_ids:
 			self.fetch_url = self.fetch_format_url.format(channel_id)
 			self.page = 1
-        	while( self.page <= self.total_page_count and not self.stop_work):
+        	while( self.page <= self.request_count and not self.stop_work):
         	    self.fetch_page_data()
         	    self.page = self.page + 1
 
@@ -127,5 +128,5 @@ class YXLadyHWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = YXLadyHWork()
+    worker = YXLadyHWork(request_count=25)
     worker()

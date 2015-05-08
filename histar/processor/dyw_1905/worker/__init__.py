@@ -97,15 +97,15 @@ class DYWork(object):
             tmp['text'] = []
             tmp['media_name'] = u'1905电影网'
             tmp = self.append_more_info( tmp )
-            print '***********************************'
-            print tmp['publish_ts']
-            print tmp['title']
-            print tmp['url']
-            for item in tmp['text']:
-                print item['type'],
-                print item['data']
-            print '***********************************'
-            break
+            #print '***********************************'
+            #print tmp['publish_ts']
+            #print tmp['title']
+            #print tmp['url']
+            #for item in tmp['text']:
+            #    print item['type'],
+            #    print item['data']
+            #print '***********************************'
+            #break
             self.resp.append( tmp )
 
     def append_more_info(self, tmp):
@@ -125,6 +125,6 @@ class DYWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = DYWork(total_page_count=1)
+    worker = DYWork(total_page_count=99)
     worker()
 

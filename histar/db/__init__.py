@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 from mongoengine import *
+from histar.config import *
 import datetime
 from types import DictType
 import hashlib
 
-connect('histar',host='192.168.1.82', port=30001)
+connect('histar',host=MONGO_HOST, port=MONGO_PORT)
 
 class StarNews(DynamicDocument):
     keywords = StringField(default='')
