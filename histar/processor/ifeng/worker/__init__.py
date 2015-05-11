@@ -101,14 +101,14 @@ class IFengWork(object):
             tmp['text'] = []
             tmp['media_name'] = u'凤凰网'
             tmp = self.append_more_info( tmp )
-            print '***********************************'
-            print tmp['publish_ts']
-            print tmp['title']
-            print tmp['url']
-            for item in tmp['text']:
-                print item['type'],
-                print item['data']
-            print '***********************************'
+            # print '***********************************'
+            # print tmp['publish_ts']
+            # print tmp['title']
+            # print tmp['url']
+            # for item in tmp['text']:
+            #    print item['type'],
+            #    print item['data']
+            #print '***********************************'
             #break
             self.resp.append( tmp )
 
@@ -128,6 +128,6 @@ class IFengWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = IFengWork(total_page_count=1)
+    worker = IFengWork(total_page_count=5)
     worker()
 
