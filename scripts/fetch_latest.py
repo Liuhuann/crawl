@@ -15,6 +15,11 @@ from histar.processor.szhk.worker import SZHKWork
 from histar.processor.youth.worker import YouthWork
 from histar.processor.yxlady.worker import YXLadyHWork
 from histar.processor.dyw_1905.worker import DYWork
+from histar.processor.y3600.worker import ReboWork
+from histar.processor.mingxku.worker import MingxkuWork
+from histar.processor.mxwang.worker import MXWWork
+from histar.processor.tupianzj.worker import TupzjWork
+from histar.processor.ifeng.worker import IFengWork 
 
 if __name__ == '__main__':
     worker_list = []
@@ -56,7 +61,12 @@ if __name__ == '__main__':
     worker_list.append( CNTVStarImageWork() )
     worker_list.append( YouthWork(total_page_count=2) )
     worker_list.append( YXLadyHWork(request_count=2) )
-    worker_list.append( DYWork(total_page_count=3) )
+    worker_list.append( DYWork(total_page_count=5) )
+    worker_list.append( ReboWork(total_page_count=5) )
+    worker_list.append( MingxkuWork(total_page_count=5) )
+    worker_list.append( MXWWork(total_page_count=5) )
+    worker_list.append( TupzjWork(total_page_count=5) )
+    worker_list.append( IFengWork(total_page_count=5) )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()
