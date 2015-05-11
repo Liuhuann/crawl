@@ -118,7 +118,7 @@ class YXLadyHWork(object):
         """
         
         url = tmp['url']
-        print 'detail url is ', url
+        #print 'detail url is ', url
         try:
             baidu = BaiduFetchAnalyst.fetch( url )
             tmp['text'] = baidu['text']
@@ -128,5 +128,5 @@ class YXLadyHWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = YXLadyHWork(request_count=25)
+    worker = YXLadyHWork(request_count=5)
     worker()
