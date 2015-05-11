@@ -98,23 +98,30 @@ def download_image(origin_image_list, referer):
     data = {}
     flag = True
     for url in origin_image_list:
-        if not url.startswith('http'):
-            continue
-        print 'url is ', url
-        res = down_img_from_url(url, referer)
-        if res is None:
-            flag = False
-            print '下载出错'
-        else:
-            ext = get_url_extname(url)
-            filename = generate_filename( res, ext )
-            code = add_file_2( ns, filename, ext, res, '')
-            if code:
-                data[ url ] = filename
-            else:
-                print code
-                print '保存图片出错'
+        try:
+            if not url.startswith('http'):
+                continue
+            print 'url is ', url
+            res = down_img_from_url(url, referer)
+            if res is None:
                 flag = False
+                print '下载出错'
+            else:
+                ext = get_url_extname(url)
+                filename = generate_filename( res, ext )
+                code = add_file_2( ns, filename, ext, res, '')
+                if code:
+                    data[ url ] = filename
+                else:
+                    fdfs_filename = get_filename( ns, filename )
+                    if fdfs_filename:
+                        data[ url ] = filename
+                    else:
+                        print code
+                        print '保存图片出错'
+                        flag = False
+        except Exception, e:
+            print '下载图片抛出异常'
 
     return flag, data
 
