@@ -114,7 +114,7 @@ class DYWork(object):
         """
 
         url = tmp['url']
-        print 'detail url is ', url
+       # print 'detail url is ', url
         try:
             res = BaiduFetchAnalyst.fetch( url )
             tmp['text'] = res['text']
@@ -125,6 +125,6 @@ class DYWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = DYWork(total_page_count=99)
+    worker = DYWork(total_page_count=5)
     worker()
 
