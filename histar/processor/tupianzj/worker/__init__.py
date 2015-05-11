@@ -91,15 +91,15 @@ class TupzjWork(object):
             tmp['text'] = []
             tmp['media_name'] = u'图片之家'
             tmp = self.append_more_info( tmp )
-            print '***********************************'
-            print tmp['publish_ts']
-            print tmp['title']
-            print tmp['url']
-            for item in tmp['text']:
-                print item['type'],
-                print item['data']
-            print '***********************************'
-            break
+            #print '***********************************'
+            #print tmp['publish_ts']
+            #print tmp['title']
+            #print tmp['url']
+            #for item in tmp['text']:
+            #    print item['type'],
+            #    print item['data']
+            #print '***********************************'
+            #break
             self.resp.append( tmp )
 
     def append_more_info(self, tmp):
@@ -108,7 +108,6 @@ class TupzjWork(object):
         """
         
         url = tmp['url']
-        print 'detail url is ', url
         try:
             baidu = BaiduFetchAnalyst.fetch( url )
             tmp['text'] = baidu['text']
@@ -124,5 +123,5 @@ class TupzjWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = TupzjWork(total_page_count=1)
+    worker = TupzjWork(total_page_count=5)
     worker()
