@@ -128,6 +128,6 @@ class DZYLWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = DZYLWork ()
+    worker = DZYLWork (total_page_count = 5)
     worker()
 
