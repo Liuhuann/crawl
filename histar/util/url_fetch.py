@@ -7,7 +7,10 @@ class FetchData(object):
     def fetch(cls, url, need_status_code=False):
         res = None
         try:
-            resp = requests.get(url)
+            proxy = {'http':'119.254.164.4:30082'}
+            headers = {'Referer':'http://news.dzyule.com/'}
+            headers['User-Agent']="Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
+            resp = requests.get(url, headers=headers, proxies=proxy)
             if not need_status_code:
                 if int(resp.status_code) in [200]:      
                     res = resp.content
