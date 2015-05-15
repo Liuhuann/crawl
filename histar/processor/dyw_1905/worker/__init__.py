@@ -38,7 +38,7 @@ class DYWork(object):
             self.page = self.page + 1
 
     def fetch_page_data(self):
-        url = self.fetch_url + '?page=' + str(self.page)
+        url = self.fetch_url if self.page ==1 else self.fetch_url + '?page=' + str(self.page)
         try:
             print 'url is ', url
             status_code, self.resp = FetchData.fetch( url, need_status_code=True )
@@ -73,7 +73,7 @@ class DYWork(object):
         index = content.find('div class="Listbox"')
         if index:
             content = content[index:]
-        one_piece_pattern = '<li.*?>(.*?)</li>'
+        one_piece_pattern = '<li.*?><span class="time">(.*?)</li>'
         title_pattern = '<a href=.*?>(.*?)</a>'
         url_pattern = 'href="(.*?)"'
         news_list = re.findall(one_piece_pattern,content)
@@ -125,6 +125,6 @@ class DYWork(object):
             return tmp
 
 if __name__ =="__main__":
-    worker = DYWork(total_page_count=5)
+    worker = DYWork(total_page_count = 5)
     worker()
 
