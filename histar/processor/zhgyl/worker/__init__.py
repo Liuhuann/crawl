@@ -57,7 +57,7 @@ class ZhgylWork(object):
     def process_content(self):
         content = self.resp
         try:
-			content = content.decode('gb2312').encode('utf-8')
+            content = content.decode('gb2312').encode('utf-8')
         except Exception,e:
             try:
                 content = content.decode('gbk').encode('utf-8')
