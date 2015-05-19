@@ -86,7 +86,6 @@ class GMWork(object):
             title = re.findall( title_pattern, item )
             url = re.findall( url_pattern, item )
             publish_ts = re.findall( publish_ts_pattern, item )
-            source = re.findall( u'来源：(.*?)时间',item )
             tmp = {}
             tmp['title'] = title[0] if title else ''
             url = url[0] if url else ''
