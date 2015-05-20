@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
-os.environ['thrift_stage'] = 'yanjiao'
+os.environ['thrift_stage'] = 'pre_release'
 import hashlib
 import random
 import pymongo
