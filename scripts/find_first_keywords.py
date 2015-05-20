@@ -1,4 +1,6 @@
 #-*- coding:utf-8 -*-
+import os
+os.environ['thrift_stage'] = 'yanjiao'
 import sys
 import time
 import datetime
@@ -11,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 model_mapper_configure = []
-keywords_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@'+MYSQL_HOST+':'+MONGO_PORT+'/search_key_words?charset=utf8mb4'
+keywords_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@'+MYSQL_HOST+':'+str(MYSQL_PORT)+'/search_key_words?charset=utf8mb4'
 keywords_configure = {
     'mysql_url': keywords_url,
     'mapper_list':[ ('special_words','KeyWords')]
@@ -52,7 +54,7 @@ def add_star_name_for_news(star_name_list):
     offset = 0
     limit = 200
     stop = False
-    while( not stop and offset < 2000):
+    while( not stop and offset < 20000):
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         res = list(StarNews.objects(star_name='', publish_ts__lt=now, review__in=[0,1]).order_by('-publish_ts').skip(offset).limit(limit).no_cache())
         print len(res)

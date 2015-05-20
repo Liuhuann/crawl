@@ -10,7 +10,7 @@ def stat_al_star_and_image_count():
     count = 0
     while ( not stop ):
         #res = StarNews.objects(review=1).skip(offset).limit(limit)
-        res = StarNews.objects().skip(offset).limit(limit)
+        res = list(StarNews.objects(review=1).skip(offset).limit(limit).no_cache())
         offset = offset + limit
         if len(res) == 0:
             break
@@ -33,5 +33,10 @@ def stat_al_star_and_image_count():
     #for k, v in star_dict.iteritems():
     #    print k, v
     #return
+    return star_dict
 
-stat_al_star_and_image_count()
+star_dict = stat_al_star_and_image_count()
+with open('stat.txt','w') as hs:
+    for k,v in star_dict.iteritems():
+        line = k.encode('utf-8')+','+str(v)+'\n'
+        hs.write(line)

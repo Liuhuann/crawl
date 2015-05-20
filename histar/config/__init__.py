@@ -13,3 +13,8 @@ elif thrift_stage=='yanjiao':
     MONGO_PORT = 30001
     MYSQL_HOST = '192.168.1.108'
     MYSQL_PORT = '3307'
+elif thrift_stage=='pre_release':
+    MONGO_HOST = '192.168.1.16'
+    MONGO_PORT = 27001
+    MYSQL_HOST = '192.168.1.16'
+    MYSQL_PORT = '3306'
