@@ -94,7 +94,7 @@ class JXRDWork(object):
             tmp['url'] = url   
             publish_ts = publish_ts[0] if publish_ts else ''
             tmp['publish_ts'] = reformat_date_str( publish_ts )
-            tmp['source'] = source[0] if source else ''
+            tmp['source'] = source[0].strip() if source else ''
             tmp['text'] = []
             tmp['media_name'] = u'巨细热点'
             tmp = self.append_more_info( tmp )
@@ -104,9 +104,9 @@ class JXRDWork(object):
             #print tmp['title']
             #print tmp['url']
             #print tmp['source']
-            for item in tmp['text']:
-                print item['type'],
-                print item['data']
+            #for item in tmp['text']:
+            #    print item['type'],
+            #    print item['data']
             #print '***********************************'
             #break
 
