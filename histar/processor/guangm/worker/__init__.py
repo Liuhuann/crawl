@@ -87,7 +87,7 @@ class GMWork(object):
             url = re.findall( url_pattern, item )
             publish_ts = re.findall( publish_ts_pattern, item )
             tmp = {}
-            tmp['title'] = title[0] if title else ''
+            tmp['title'] = title[0].strip() if title else ''
             url = url[0] if url else ''
             tmp['url'] = 'http://e.gmw.cn/' + '%s'%url   
             publish_ts = publish_ts[0] if publish_ts else ''
