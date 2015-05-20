@@ -21,6 +21,9 @@ from histar.processor.mxwang.worker import MXWWork
 from histar.processor.tupianzj.worker import TupzjWork
 from histar.processor.ifeng.worker import IFengWork 
 from histar.processor.dazyl.worker import DZYLWork 
+from histar.processor.qoocc.worker import JXRDWork
+from histar.processor.zhgyl.worker import ZhgylWork
+from histar.processor.guangm.worker import GMWork
 
 if __name__ == '__main__':
     worker_list = []
@@ -69,6 +72,9 @@ if __name__ == '__main__':
     worker_list.append( TupzjWork(total_page_count=5) )
     worker_list.append( IFengWork(total_page_count=5) )
     worker_list.append( DZYLWork(total_page_count=5) )
+    worker_list.append( JXRDWork(total_page_count=5) )
+    worker_list.append( ZhgylWork(total_page_count=5) )
+    worker_list.append( GMWork(total_page_count=5) )
     for worker in worker_list:
         p = Process(target=worker)
         p.start()

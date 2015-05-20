@@ -3,34 +3,29 @@ from histar.util.text_process import(
         keep_certain_keys,
         reformat_date_str,
         )
-from histar.util.url_fetch import (
+from histar.util.url_fetch import(
         FetchData,
         )
-from histar.util.baidu_fetch import (
+from histar.util.baidu_fetch import(
         BaiduFetchAnalyst,
         )
-from histar.db import (
-        DBSession,
-        )
-from datetime import (
+from histar.db import DBSession
+from datetime import(
         datetime,
         timedelta,
         )
 import copy
-import time
-import json
 import re
-import urllib
+import json
+import time
 
-class DYWork(object):
-    def __init__(self, page_limit=True, total_page_count=99, page = 1 ):
+class GMWork(object):
+    def __init__(self,page_limit=True, total_page_count=10, page=1 ):
         self.stop_work = False
-        self.fetch_url ='http://www.1905.com/list-p-catid-221.html' 
-        self.fetch_format_url = self.fetch_url
-        self.data = {}
+        self.fetch_url = 'http://e.gmw.cn/node_8755'
         self.page_limit = page_limit
-        self.total_page_count = total_page_count
         self.page = page
+        self.total_page_count = total_page_count
 
     def __call__(self):
         while( self.page <= self.total_page_count and not self.stop_work):
@@ -38,7 +33,10 @@ class DYWork(object):
             self.page = self.page + 1
 
     def fetch_page_data(self):
-        url = self.fetch_url if self.page ==1 else self.fetch_url + '?page=' + str(self.page)
+        if self.page == 1:
+            url = self.fetch_url + '.htm' 
+        else: 
+            url = self.fetch_url + '_' + str(self.page) +'.htm'
         try:
             print 'url is ', url
             status_code, self.resp = FetchData.fetch( url, need_status_code=True )
@@ -70,15 +68,16 @@ class DYWork(object):
         self.resp = []
         content = content.replace('\n','')
         content = content.replace("'",'"')
-        index = content.find('div class="Listbox"')
+        index = content.find('class="channel-newsGroup"') 
         if index:
             content = content[index:]
-        one_piece_pattern = '<li.*?><span class="time">(.*?)</li>'
-        title_pattern = '<a href=.*?>(.*?)</a>'
-        url_pattern = 'href="(.*?)"'
+
+        one_piece_pattern = '(<li>.*?</li>)'
+        url_pattern ='<a href="(.*?)".*>'
+        title_pattern = '<a href.*?>(.*?)</a>'
+        publish_ts_pattern = '<span.*?>(.*?)</span>'
         news_list = re.findall(one_piece_pattern,content)
-        print len(news_list)
-        publish_ts_pattern ='([0-9]{4}-[0-9]{1,2}-[0-9]{1,2})'
+        #print len(news_list)
 
         if len(news_list)==0:
             self.stop_work = True
@@ -86,17 +85,17 @@ class DYWork(object):
         for item in news_list:
             title = re.findall( title_pattern, item )
             url = re.findall( url_pattern, item )
-            item = item.replace('/','-')
-            publish_ts = re.findall (publish_ts_pattern, item)
+            publish_ts = re.findall( publish_ts_pattern, item )
             tmp = {}
             tmp['title'] = title[0] if title else ''
             url = url[0] if url else ''
-            tmp['url'] = url   
+            tmp['url'] = 'http://e.gmw.cn/' + '%s'%url   
             publish_ts = publish_ts[0] if publish_ts else ''
             tmp['publish_ts'] = reformat_date_str( publish_ts )
             tmp['text'] = []
-            tmp['media_name'] = u'1905电影网'
+            tmp['media_name'] = u'光明网'
             tmp = self.append_more_info( tmp )
+            self.resp.append( tmp )
             #print '***********************************'
             #print tmp['publish_ts']
             #print tmp['title']
@@ -106,7 +105,6 @@ class DYWork(object):
             #    print item['data']
             #print '***********************************'
             #break
-            self.resp.append( tmp )
 
     def append_more_info(self, tmp):
         """
@@ -114,17 +112,15 @@ class DYWork(object):
         """
 
         url = tmp['url']
-       # print 'detail url is ', url
         try:
             res = BaiduFetchAnalyst.fetch( url )
             tmp['text'] = res['text']
-        
+
         except Exception, e:
             print e
         finally:
             return tmp
 
 if __name__ =="__main__":
-    worker = DYWork(total_page_count = 5)
-    worker()
-
+    worker = GMWork(total_page_count= 5)
+    worker()        

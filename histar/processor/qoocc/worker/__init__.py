@@ -22,10 +22,10 @@ import json
 import re
 import urllib
 
-class DYWork(object):
-    def __init__(self, page_limit=True, total_page_count=99, page = 1 ):
+class JXRDWork(object):
+    def __init__(self, page_limit=True, total_page_count=354, page = 1 ):
         self.stop_work = False
-        self.fetch_url ='http://www.1905.com/list-p-catid-221.html' 
+        self.fetch_url = 'http://www.qoocc.com/mingxing/list/{}'
         self.fetch_format_url = self.fetch_url
         self.data = {}
         self.page_limit = page_limit
@@ -38,7 +38,7 @@ class DYWork(object):
             self.page = self.page + 1
 
     def fetch_page_data(self):
-        url = self.fetch_url if self.page ==1 else self.fetch_url + '?page=' + str(self.page)
+        url = self.fetch_url.format(self.page)
         try:
             print 'url is ', url
             status_code, self.resp = FetchData.fetch( url, need_status_code=True )
@@ -70,15 +70,15 @@ class DYWork(object):
         self.resp = []
         content = content.replace('\n','')
         content = content.replace("'",'"')
-        index = content.find('div class="Listbox"')
-        if index:
-            content = content[index:]
-        one_piece_pattern = '<li.*?><span class="time">(.*?)</li>'
-        title_pattern = '<a href=.*?>(.*?)</a>'
-        url_pattern = 'href="(.*?)"'
+        content = content.replace('alt','title')
+        
+        one_piece_pattern = '(<li >.*?</li>|<li  class="list-recom">.*?</li>)'
+        url_pattern ='<a href="(.*?)".*>'
+        title_pattern = '<a href.*?title="(.*?)"\s*/>'
+        publish_ts_pattern = '([0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2})'
         news_list = re.findall(one_piece_pattern,content)
-        print len(news_list)
-        publish_ts_pattern ='([0-9]{4}-[0-9]{1,2}-[0-9]{1,2})'
+        del news_list[0]
+        #print len(news_list)
 
         if len(news_list)==0:
             self.stop_work = True
@@ -86,27 +86,29 @@ class DYWork(object):
         for item in news_list:
             title = re.findall( title_pattern, item )
             url = re.findall( url_pattern, item )
-            item = item.replace('/','-')
-            publish_ts = re.findall (publish_ts_pattern, item)
+            publish_ts = re.findall( publish_ts_pattern, item )
+            source = re.findall( u'来源：(.*?)时间',item )
             tmp = {}
             tmp['title'] = title[0] if title else ''
             url = url[0] if url else ''
             tmp['url'] = url   
             publish_ts = publish_ts[0] if publish_ts else ''
             tmp['publish_ts'] = reformat_date_str( publish_ts )
+            tmp['source'] = source[0] if source else ''
             tmp['text'] = []
-            tmp['media_name'] = u'1905电影网'
+            tmp['media_name'] = u'巨细热点'
             tmp = self.append_more_info( tmp )
+            self.resp.append( tmp )
             #print '***********************************'
             #print tmp['publish_ts']
             #print tmp['title']
             #print tmp['url']
-            #for item in tmp['text']:
-            #    print item['type'],
-            #    print item['data']
+            #print tmp['source']
+            for item in tmp['text']:
+                print item['type'],
+                print item['data']
             #print '***********************************'
             #break
-            self.resp.append( tmp )
 
     def append_more_info(self, tmp):
         """
@@ -114,17 +116,16 @@ class DYWork(object):
         """
 
         url = tmp['url']
-       # print 'detail url is ', url
         try:
             res = BaiduFetchAnalyst.fetch( url )
             tmp['text'] = res['text']
-        
+
         except Exception, e:
             print e
         finally:
             return tmp
 
 if __name__ =="__main__":
-    worker = DYWork(total_page_count = 5)
+    worker = JXRDWork(total_page_count= 5)
     worker()
 
