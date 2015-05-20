@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import os
+os.environ['thrift_stage'] = 'yanjiao'
 import hashlib
 import random
 import pymongo
@@ -10,6 +12,9 @@ from histar.db import StarNews
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from autoload import auto_load_register_table_class
+
+print MYSQL_HOST, MYSQL_PORT
+print MONGO_HOST, MONGO_PORT
 
 wodfan_url = 'mysql+pymysql://website:GWXmYaonK4TFx1qiDGdlvWKOJ@'+MYSQL_HOST+':'+MYSQL_PORT+'/wodfan?charset=utf8mb4'
 model_mapper_configure = []
@@ -137,6 +142,8 @@ def update_star_news_with_download_image():
         now = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         res = StarNews.objects(download_img=0, publish_ts__lt=now).order_by('-publish_ts').skip(offset).limit(limit)
         offset = offset + limit
+        if offset >=500:
+            offset = 0
         if len(res)==0:
             stop = True
         def get_star_news_images(obj):
