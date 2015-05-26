@@ -4,6 +4,7 @@ from histar.config import *
 import datetime
 from types import DictType
 import hashlib
+from histar.util.text_process import html_tags_parser
 
 connect('histar',host=MONGO_HOST, port=MONGO_PORT)
 
@@ -52,7 +53,8 @@ class DBSession(object):
                     print '存在已经抓取的，不需要更新'
                     return True
                 for attr in data.keys():
-                    setattr(info, attr, data[attr])
+                    cls.html_tags_parser(data[attr])
+                    setattr(info, attr, value)
                 info.save()
                 return True
             else:
@@ -108,3 +110,4 @@ class DBSession(object):
         except Exception, e:
             print e
             return False
+
