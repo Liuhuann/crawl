@@ -41,7 +41,7 @@ def reformat_date_str(ts):
         ts = ts+':'+item
     return ts
 
-def html_tags_parser(cls,htmlstr):
+def html_tags_parser(htmlstr):
     html_parser = HTMLParser.HTMLParser()
     txt = html_parser.unescape(htmlstr)
     re_h = re.compile('</?\w+[^>]*>')
