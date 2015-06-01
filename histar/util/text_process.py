@@ -2,6 +2,7 @@
 import re
 import json
 from types import ListType, DictType
+import HTMLParser
 
 def keep_certain_keys(data, key_list):
     """
@@ -40,6 +41,14 @@ def reformat_date_str(ts):
         ts = ts+':'+item
     return ts
 
+def html_tags_parser(htmlstr):
+    html_parser = HTMLParser.HTMLParser()
+    txt = html_parser.unescape(htmlstr)
+    re_h = re.compile(r'</?\w+[^>]*>')
+    value = re_h.sub('',txt)
+    #print value
+    return value
+
 if __name__ == '__main__':
     print reformat_date_str('2015-2-1')
     print reformat_date_str('2015-02-1')
@@ -47,3 +56,5 @@ if __name__ == '__main__':
     print reformat_date_str('2015-02-01 9:10')
     print reformat_date_str('2015-02-01 9:1')
     print reformat_date_str('2015-02-01 9:1:1')
+    #print html_tags_parser('<a link="www.baidu.com">标签')
+    #print html_tags_parser('</html>tags')
